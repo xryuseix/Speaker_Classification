@@ -1,0 +1,3 @@
+import cnn
+
+cnn = cnn()
