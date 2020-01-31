@@ -1,5 +1,6 @@
 from pydub import AudioSegment
 import pathlib
+import re
 
 def trim(dir, file):
     # read mp3
@@ -12,13 +13,16 @@ def trim(dir, file):
         # output
         trimed_sound.export(dir[0:5] + str(i) + '.mp3', format='mp3')
 
+def search(raw_root):
+    path = pathlib.Path(raw_root)
+    persons = [str(p) for p in path.iterdir()]
+
+    for person in persons:
+        personal_name = re.sub('^.*/', '', person)
+        voices = [str(p) for p in pathlib.Path(person).iterdir()]
+        print(voices)
+
 raw_root = './../../../学習データ/radio_audio/trimed/'
 output_root = './lib/voice/'
 
-# search
-path = pathlib.Path(raw_root)
-persons = [str(p) for p in path.iterdir()]
-
-for person in persons:
-    voices = [str(p) for p in pathlib.Path(person).iterdir()]
-    print(voices)
+search(raw_root)
