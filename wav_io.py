@@ -24,6 +24,8 @@ def paths(root, dir = True):
                 res.append(str(po))
     if not dir:
         res = sorted(res, key=lambda str:lamb(str))
+    else:
+        res = sorted(res)
     return res
 
 
@@ -32,9 +34,10 @@ def build_source():
     print('Build Audio Data')
     root = './lib/voice/'
     persons = paths(root)
+    print(persons)
     for person in persons:
         files = paths(person, False)
-        for file in tqdm(files[0:50]):
+        for i, file in enumerate(tqdm(files[0:50])):
             name = re.sub('^.*/', '', person)
             # if not exist file
             if not os.path.exists('./lib/re_voice/' + name):
@@ -51,6 +54,13 @@ def build_source():
             sec_wav, sec_fs = rwave.convert_sec(wav, ds_fs, 1)
             # ビルド後の音源を書き込み
             rwave.write_wave(out_filepath, sec_wav, sec_fs)
+            
+            if i < 40:
+                # 教師データ
+                print('',end='')
+            else:
+                # テストデータ
+                print('',end='')
             
 
 build_source()
