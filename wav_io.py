@@ -76,5 +76,3 @@ def build_source():
                 test_y.append(i)
     
     return train_x, train_y, test_x, test_y
-
-build_source()
