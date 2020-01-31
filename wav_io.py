@@ -64,11 +64,15 @@ def build_source():
             # 前半40個は教師データにする
             if j < 40:
                 # 教師データ
-                train_x.append(sec_wav)
+                mmcc = rwave.to_mfcc(out_filepath, sec_fs)
+                mfcc = rwave.nomalize(mfcc)
+                train_x.append(mmcc)
                 train_y.append(i)
             else:
                 # テストデータ
-                test_x.append(sec_wav)
+                mmcc = rwave.to_mfcc(out_filepath, sec_fs)
+                mfcc = rwave.nomalize(mfcc)
+                test_x.append(mmcc)
                 test_y.append(i)
     
     return train_x, train_y, test_x, test_y
