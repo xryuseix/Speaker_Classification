@@ -1,14 +1,24 @@
 from pydub import AudioSegment
+import pathlib
 
-# read mp3
-sound = AudioSegment.from_mp3("./sample.mp3")
+def trim(dir, file):
+    # read mp3
+    sound = AudioSegment.from_mp3(file)
+    # time(s)
+    duration = sound.duration_seconds
 
-# 5000ms~10000ms
-sound1 = sound[5000:10000]
+    for i in range(0,duration-1):
+        trimed_sound = sound[i*1000 : (i + 1)*1000]
+        # output
+        trimed_sound.export(dir[0:5] + str(i) + '.mp3', format='mp3')
 
-# last 10000ms
-sound2 = sound[-10000:]
+raw_root = './../../../学習データ/radio_audio/trimed/'
+output_root = './lib/voice/'
 
-# output
-sound1.export("output1.mp3", format="mp3")
-sound2.export("output2.mp3", format="mp3")
+# search
+path = pathlib.Path(raw_root)
+persons = [str(p) for p in path.iterdir()]
+
+for person in persons:
+    voices = [str(p) for p in pathlib.Path(person).iterdir()]
+    print(voices)
