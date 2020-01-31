@@ -31,13 +31,19 @@ def paths(root, dir = True):
 
 def build_source():
     ## ========== 音源をビルド ==============================
-    print('Build Audio Data')
+    print("======= BUILD AUDIO DATA =======")
+    
     root = './lib/voice/'
     persons = paths(root)
-    print(persons)
-    for person in persons:
+    
+    train_x = []
+    train_y = []
+    test_x = []
+    test_y = []
+    
+    for i, person in enumerate(persons):
         files = paths(person, False)
-        for i, file in enumerate(tqdm(files[0:50])):
+        for j, file in enumerate(tqdm(files[0:50])):
             name = re.sub('^.*/', '', person)
             # if not exist file
             if not os.path.exists('./lib/re_voice/' + name):
@@ -55,12 +61,16 @@ def build_source():
             # ビルド後の音源を書き込み
             rwave.write_wave(out_filepath, sec_wav, sec_fs)
             
-            if i < 40:
+            # 前半40個は教師データにする
+            if j < 40:
                 # 教師データ
-                print('',end='')
+                train_x.append(sec_wav)
+                train_y.append(i)
             else:
                 # テストデータ
-                print('',end='')
-            
+                test_x.append(sec_wav)
+                test_y.append(i)
+    
+    return train_x, train_y, test_x, test_y
 
 build_source()
