@@ -1,5 +1,6 @@
 import rwave
 import pathlib
+import re
 
 '''
 wavfile = './lib/voice/do.wav'
@@ -23,30 +24,47 @@ print(sec_wav)
 print(sec_fs)
 '''
 
-def dirs(root):
+def lamb(str):
+    ## ========== ファイル名でソートするラムダ式 ==============================
+    num = re.sub('^.*/', '', re.sub('.mp3', '', str))
+    return int(num)
+
+
+def paths(root, dir = True):
+    ## ========== ディレクトリ，ファイルの全列挙 ==============================
     res = []
     path = pathlib.Path(root)
     for po in path.iterdir():
-        if po.is_dir():
-            res.append(str(po))
+        if dir:
+            if po.is_dir() and str(po) != 'sample':
+                res.append(str(po))
+        else:
+            if po.is_file():
+                res.append(str(po))
+    if not dir:
+        res = sorted(res, key=lambda str:lamb(str))
     return res
+
 
 def build_source():
     ## ========== 音源をビルド ==============================
     print('Build Audio Data')
     root = './lib/voice/'
-    persons = dirs(root)
+    persons = paths(root)
     print(persons)
-    # for file in tqdm(wav_files):
-    #     # 変換後のファイルPATH
-    #     out_filepath = file.replace(audio_config['speaker_raw_path'], audio_config['speaker_build_path'])
-    #     # 元音源読み込み
-    #     wav, fs = rwave.read_wave(file)
-    #     # サンプリングレートを調整（8kHz）
-    #     ds_wav, ds_fs = rwave.convert_fs(wav, fs, audio_config['wave_fs'])
-    #     # 音源の秒数を調整
-    #     sec_wav, sec_fs = rwave.convert_sec(wav, ds_fs, audio_config['wave_sec'])
-    #     # ビルド後の音源を書き込み
-    #     rwave.write_wave(out_filepath, sec_wav, sec_fs)
+    for person in persons:
+        print(paths(person, False))
+        return
+        # for file in tqdm(wav_files):
+        #     # 変換後のファイルPATH
+        #     out_filepath = file.replace(audio_config['speaker_raw_path'], audio_config['speaker_build_path'])
+        #     # 元音源読み込み
+        #     wav, fs = rwave.read_wave(file)
+        #     # サンプリングレートを調整（8kHz）
+        #     ds_wav, ds_fs = rwave.convert_fs(wav, fs, audio_config['wave_fs'])
+        #     # 音源の秒数を調整
+        #     sec_wav, sec_fs = rwave.convert_sec(wav, ds_fs, audio_config['wave_sec'])
+        #     # ビルド後の音源を書き込み
+        #     rwave.write_wave(out_filepath, sec_wav, sec_fs)
 
 build_source()
