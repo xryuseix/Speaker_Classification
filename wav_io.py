@@ -32,15 +32,15 @@ def paths(root, dir = True):
 def build_source():
     ## ========== 音源をビルド ==============================
     print("======= BUILD AUDIO DATA =======")
-    
+
     root = './lib/voice/'
     persons = paths(root)
-    
+
     train_x = []
     train_y = []
     test_x = []
     test_y = []
-    
+
     for i, person in enumerate(persons):
         files = paths(person, False)
         for j, file in enumerate(tqdm(files[0:50])):
@@ -51,7 +51,7 @@ def build_source():
             # 変換後のファイルPATH
             num = re.sub('^.*/', '', re.sub('.wav', '', file))
             out_filepath = './lib/re_voice/' + name + '/' + num + '.wav'
-            
+
             # 元音源読み込み
             wav, fs = rwave.read_wave(file)
             # サンプリングレートを調整
@@ -60,19 +60,21 @@ def build_source():
             sec_wav, sec_fs = rwave.convert_sec(wav, ds_fs, 1)
             # ビルド後の音源を書き込み
             rwave.write_wave(out_filepath, sec_wav, sec_fs)
-            
+
             # 前半40個は教師データにする
             if j < 40:
                 # 教師データ
-                mmcc = rwave.to_mfcc(out_filepath, sec_fs)
+                mfcc = rwave.to_mfcc(out_filepath, sec_fs)
                 mfcc = rwave.nomalize(mfcc)
-                train_x.append(mmcc)
+                for num in mfcc:
+                    train_x.append(num)
                 train_y.append(i)
             else:
                 # テストデータ
-                mmcc = rwave.to_mfcc(out_filepath, sec_fs)
+                mfcc = rwave.to_mfcc(out_filepath, sec_fs)
                 mfcc = rwave.nomalize(mfcc)
-                test_x.append(mmcc)
+                for num in mfcc:
+                    test_x.append(num)
                 test_y.append(i)
-    
+
     return train_x, train_y, test_x, test_y

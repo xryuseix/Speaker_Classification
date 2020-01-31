@@ -1,3 +1,3 @@
 import cnn
 
-cnn = CNN()
+cnn = cnn.CNN()
