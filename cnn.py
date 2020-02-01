@@ -12,17 +12,16 @@ import wav_io
 class CNN():
     def __init__(self):
         print("======= START CNN =======")
-        train_x, train_y, test_x, test_y = self.load_data(num_classes)
         batch_size = 128
         num_classes = 8
         epochs = 20
+        train_x, train_y, test_x, test_y = self.load_data(num_classes)
         
     def load_data(self, num_classes):
         print("======= LOAD DATA =======")
         train_x, train_y, test_x, test_y = wav_io.build_source()
-
-        train_x = np.reshape(320, -1)
-        test_x = np.reshape(80, -1)
+        train_x = np.reshape(train_x, (320, -1))
+        test_x = np.reshape(test_x, (80, -1))
         train_y = keras.utils.to_categorical(train_y, num_classes)
         test_y = keras.utils.to_categorical(test_y, num_classes)
 
