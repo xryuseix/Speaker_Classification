@@ -40,10 +40,12 @@ def build_source():
     train_y = []
     test_x = []
     test_y = []
+    
+    data = 50
 
     for i, person in enumerate(persons):
         files = paths(person, False)
-        for j, file in enumerate(tqdm(files[0:50])):
+        for j, file in enumerate(tqdm(files[0:data])):
             name = re.sub('^.*/', '', person)
             # if not exist file
             if not os.path.exists('./lib/re_voice/' + name):
@@ -61,8 +63,8 @@ def build_source():
             # ビルド後の音源を書き込み
             rwave.write_wave(out_filepath, sec_wav, sec_fs)
 
-            # 前半40個は教師データにする
-            if j < 40:
+            # 前半80%は教師データにする
+            if j < data * 0.8:
                 # 教師データ
                 mfcc = rwave.to_mfcc(out_filepath, sec_fs)
                 mfcc = rwave.nomalize(mfcc)
@@ -77,4 +79,4 @@ def build_source():
                     test_x.append(num)
                 test_y.append(i)
 
-    return train_x, train_y, test_x, test_y
+    return train_x, train_y, test_x, test_y, data
