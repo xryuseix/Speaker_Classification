@@ -17,14 +17,22 @@ class CNN():
         epochs = 20
         train_x, train_y, test_x, test_y = self.load_data(num_classes)
         
+        model = self.make_model(num_classes)
+        self.summary(model)
+        
+        model, es, csv_logger = compile(model)
+        hist = self.learn(model,
+                          x_train, y_train,
+                          batch_size, epochs,
+                          es, csv_logger)
+        
     def load_data(self, num_classes):
         print("======= LOAD DATA =======")
         train_x, train_y, test_x, test_y = wav_io.build_source()
-        train_x = np.reshape(train_x, (320, -1))
-        test_x = np.reshape(test_x, (80, -1))
+        train_x = np.reshape(train_x, (num_classes * 40, -1))
+        test_x = np.reshape(test_x, (num_classes * 10, -1))
         train_y = keras.utils.to_categorical(train_y, num_classes)
         test_y = keras.utils.to_categorical(test_y, num_classes)
-
         return train_x, train_y, test_x, test_y
 
     def make_model(self, num_classes):
@@ -38,15 +46,30 @@ class CNN():
         model.add(Dropout(0.4))
         model.add(Dense(num_classes))
         model.add(Activation('softmax'))
+        return model
 
-    def summary(self):
+    def summary(self, model):
         print("======= SUMMARY =======")
+        model.summary()
 
-    def compile(self):
+    def compile(self, model):
         print("======= COMPILE =======")
+        model.compile(loss='categorical_crossentropy',
+                      optimizer=Adam(),
+                      metrics=['accuracy'])
+        es = EarlyStopping(monitor='val_loss', patience=2)
+        csv_logger = CSVLogger('training.log')
+        return model, es, csv_logger
 
-    def learn(self):
+    def learn(self, model, x_train, y_train, batch_size, epochs, es, csv_logger):
         print("======= LEARNING =======")
+        hist = model.fit(x_train, y_train,
+                 batch_size=batch_size,
+                 epochs=epochs,
+                 verbose=1,
+                 validation_split=0.1,
+                 callbacks=[es, csv_logger])
+        return hist
 
     def evaluate(self):
         print("======= EVALUATE =======")
