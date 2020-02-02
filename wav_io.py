@@ -41,7 +41,7 @@ def build_source():
     test_x = []
     test_y = []
     
-    data = 50
+    data = 100
 
     for i, person in enumerate(persons):
         files = paths(person, False)
